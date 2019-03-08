@@ -29,7 +29,7 @@ class SessionsController extends Controller
         3). 如果匹配后两个值不一致，则返回 false；
         如果用户未找到，则返回 false。
          */
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->has('remember'))) {
             // 该用户存在于数据库，且邮箱和密码相符合
             session()->flash('success', '欢迎回来！');
             return redirect()->route('users.show', [Auth::user()]);
@@ -38,5 +38,13 @@ class SessionsController extends Controller
             return redirect()->back()->withInput();
         }
 
+    }
+
+    public function destroy()
+    {
+        Auth::logout();
+        //return redirect('login');
+        session()->flash('success', '您已成功退出！');
+        return redirect()->route('login');
     }
 }
